@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Laboratorio académico de la Regla del Trapecio Compuesto para estimar tráfico de red.">
+  <title>Integración Numérica | Trapecio Compuesto</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <script defer src="{{ url_for('static', filename='js/app.js') }}"></script>
+</head>
+<body>
+  <header class="hero" id="inicio">
+    <div class="hero-grid"></div>
+    <div class="container hero-content">
+      <p class="eyebrow">Métodos Numéricos · Unidad 3 · Sesión 12</p>
+      <h1>Integración con la <span>Regla del Trapecio Compuesto</span></h1>
+      <p>Estima los datos transferidos por un servidor, sigue cada evaluación y comprueba cómo disminuye el error.</p>
+      <div class="chips"><span>Algoritmo manual</span><span>Procedimiento auditable</span><span>Convergencia real</span></div>
+    </div>
+  </header>
+
+  <main class="container workspace">
+    <div id="message" class="message" role="alert" aria-live="polite" hidden></div>
+    <section class="problem-grid" aria-labelledby="problem-title">
+      <article class="problem-card">
+        <p class="kicker">Problema oficial</p>
+        <h2 id="problem-title">Tráfico acumulado de un servidor web</h2>
+        <p>La tasa de transferencia cambia con el tiempo. La integral representa la cantidad total de datos enviados.</p>
+        <div class="formula"><span>Tasa instantánea</span><strong>R(t) = 10 + 5 sin(πt/4) + e<sup>0.15t</sup></strong><small>t en segundos · R(t) en Mbps</small></div>
+        <div class="formula accent"><span>Datos transferidos</span><strong>D = ∫<sub>a</sub><sup>b</sup> R(t) dt</strong><small>D en Megabits</small></div>
+      </article>
+      <aside class="method-card">
+        <p class="kicker">Fórmula aplicada</p>
+        <h3>Trapecio compuesto</h3>
+        <div class="method-formula">T<sub>n</sub> = h [ R(t<sub>0</sub>)/2 + Σ R(t<sub>i</sub>) + R(t<sub>n</sub>)/2 ]</div>
+        <ol><li>Calcular h=(b-a)/n.</li><li>Construir n+1 puntos.</li><li>Aplicar peso ½ en los extremos.</li><li>Multiplicar la suma ponderada por h.</li></ol>
+      </aside>
+    </section>
+
+    <section class="calculator" aria-labelledby="calculator-title">
+      <div class="section-head"><div><p class="kicker">Laboratorio interactivo</p><h2 id="calculator-title">Configura la integración</h2></div><span class="status">Caso oficial precargado</span></div>
+      <form id="trapecio-form" class="input-card">
+        <div class="field"><label for="a">Límite inferior a</label><input id="a" name="a" type="number" step="any" value="0" required><small>Segundos</small></div>
+        <div class="field"><label for="b">Límite superior b</label><input id="b" name="b" type="number" step="any" value="12" required><small>Segundos</small></div>
+        <div class="field"><label for="n">Subintervalos n</label><input id="n" name="n" type="number" min="1" step="1" value="4" required><small>Entero positivo</small></div>
+        <div class="actions"><button id="official-button" class="button secondary" type="button">Cargar ejercicio oficial</button><button id="calculate-button" class="button primary" type="submit"><span>Calcular integral</span><b>→</b></button></div>
+      </form>
+    </section>
+
+    <section id="results" class="results" hidden aria-labelledby="results-title">
+      <div class="section-head"><div><p class="kicker">Desarrollo calculado</p><h2 id="results-title">Procedimiento y resultados</h2></div><button id="copy-button" class="button secondary" type="button">Copiar procedimiento</button></div>
+      <div class="summary-grid">
+        <article><span>Ancho de paso</span><strong id="summary-h">—</strong><small>h=(b-a)/n</small></article>
+        <article><span>Trapecio compuesto</span><strong id="summary-result">—</strong><small>Megabits</small></article>
+        <article><span>Referencia analítica</span><strong id="summary-exact">—</strong><small>Megabits</small></article>
+        <article><span>Error porcentual</span><strong id="summary-error">—</strong><small>Respecto al valor exacto</small></article>
+      </div>
+
+      <article class="result-card">
+        <div class="result-title"><b>1</b><div><span>Paso y malla</span><h3>Construcción de los nodos</h3></div></div>
+        <div id="step-development" class="math-stack"></div>
+      </article>
+
+      <article class="result-card">
+        <div class="result-title"><b>2</b><div><span>Evaluaciones y pesos</span><h3>Tabla completa del método</h3></div></div>
+        <div class="table-wrap"><table><thead><tr><th>i</th><th>tᵢ (s)</th><th>R(tᵢ) (Mbps)</th><th>Peso</th><th>Aporte ponderado</th></tr></thead><tbody id="points-body"></tbody></table></div>
+      </article>
+
+      <article class="result-card">
+        <div class="result-title"><b>3</b><div><span>Sustitución</span><h3>Aplicación de la fórmula</h3></div></div>
+        <div id="formula-development" class="math-stack"></div>
+      </article>
+
+      <article class="result-card">
+        <div class="result-title"><b>4</b><div><span>Comprobación</span><h3>Integral exacta y errores</h3></div></div>
+        <div id="error-development" class="math-stack"></div>
+      </article>
+
+      <article class="result-card">
+        <div class="result-title"><b>5</b><div><span>Precisión</span><h3>Tabla de convergencia</h3></div></div>
+        <div class="table-wrap"><table><thead><tr><th>n</th><th>Aproximación (Mb)</th><th>Error absoluto (Mb)</th><th>Error porcentual</th></tr></thead><tbody id="convergence-body"></tbody></table></div>
+        <p id="convergence-note" class="note"></p>
+      </article>
+
+      <div class="charts-grid">
+        <article class="result-card chart-card"><div class="result-title"><b>G1</b><div><span>Interpretación geométrica</span><h3>R(t) y trapecios</h3></div></div><div class="canvas-shell"><canvas id="function-chart" role="img" aria-label="Gráfica de la tasa de transferencia y los trapecios"></canvas></div><div class="legend"><span><i class="curve"></i>R(t)</span><span><i class="trap"></i>Trapecios</span><span><i class="node"></i>Nodos</span></div></article>
+        <article class="result-card chart-card"><div class="result-title"><b>G2</b><div><span>Convergencia</span><h3>Error absoluto vs. n</h3></div></div><div class="canvas-shell"><canvas id="convergence-chart" role="img" aria-label="Gráfica logarítmica del error absoluto"></canvas></div><p class="note">Ambos ejes usan escala logarítmica para hacer visible la tendencia.</p></article>
+      </div>
+    </section>
+  </main>
+  <footer><div class="container"><span>Métodos Numéricos · Unidad 3</span><span>Newton-Cotes · Trapecio Compuesto</span></div></footer>
+</body>
+</html>
+

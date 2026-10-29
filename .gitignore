@@ -1,0 +1,46 @@
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Cachés y bytecode de Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Variables de entorno y secretos
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Cobertura, compilación y paquetes
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Archivos temporales y registros
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+~$*
+tmp/
+temp/
+
+# Editores y sistema operativo
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
